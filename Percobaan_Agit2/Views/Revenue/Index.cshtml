@@ -1,0 +1,173 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = "Revenue Charts";
+}
+
+<h2>Revenue Charts</h2>
+
+<div>
+    <canvas id="itemGroupChart" width="400" height="200"></canvas>
+    <canvas id="countryChart" width="400" height="200"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Fetch and display Item Group data
+        $.ajax({
+            url: "/api/itemgroup", // Ensure this URL matches your API route
+            type: 'GET',
+            success: function (itemGroupResponse) {
+                var ctxItemGroup = document.getElementById("itemGroupChart").getContext("2d");
+
+                var itemGroupChart = new Chart(ctxItemGroup, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: "Revenue By Item Group",
+                            fill: false,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(75,192,192,0.4)",
+                            borderColor: "rgba(75,192,192,1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(75,192,192,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data: [],
+                            spanGaps: false
+                        }]
+                    },
+                    options: {
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Item Group'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Revenue'
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                var labels = [];
+                var values = [];
+
+                $.each(itemGroupResponse, function (i, item) {
+                    labels.push(item.category);
+                    values.push(item.amount);
+                });
+
+                itemGroupChart.data.labels = labels;
+                itemGroupChart.data.datasets[0].data = values;
+                itemGroupChart.update();
+            },
+            error: function (xhr, status, error) {
+                console.error("Item Group Data Fetch Error:", error);
+            }
+        });
+
+        // Fetch and display Country data
+        $.ajax({
+            url: "/api/country", // Ensure this URL matches your API route
+            type: 'GET',
+            success: function (countryResponse) {
+                var ctxCountry = document.getElementById("countryChart").getContext("2d");
+
+                var countryChart = new Chart(ctxCountry, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: "Revenue By Country",
+                            fill: false,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(75,192,192,0.4)",
+                            borderColor: "rgba(75,192,192,1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(75,192,192,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data: [],
+                            spanGaps: false
+                        }]
+                    },
+                    options: {
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Country'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Revenue'
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                var labels = [];
+                var values = [];
+
+                $.each(countryResponse, function (i, item) {
+                    labels.push(item.category);
+                    values.push(item.amount);
+                });
+
+                countryChart.data.labels = labels;
+                countryChart.data.datasets[0].data = values;
+                countryChart.update();
+            },
+            error: function (xhr, status, error) {
+                console.error("Country Data Fetch Error:", error);
+            }
+        });
+    });
+
+</script>
